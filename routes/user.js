@@ -43,8 +43,8 @@ router.post('/login', async(req,res)=>{
 
     res.cookie('authToken', token,{
         httpOnly:true,
-        secure:false,
-        sameSite:'strict',
+        secure:true,
+        sameSite:'Lax',
         maxAge:60*60*1000,
     })
  return res.status(201).json({ status: true, message: "Login successful",token })
@@ -54,29 +54,38 @@ router.post('/login', async(req,res)=>{
     }
 })
 
-router.post('/profile', async (req,res)=>{
+router.post('/profile', async (req, res) => {
     try {
-        const token = req.cookies.authToken
+        const token = req.cookies.authToken;
 
-         if (!token) return res.status(400).json({ status: false, message: "access denied" });
+        if (!token) return res.status(400).json({ status: false, message: "Access denied" });
 
-         jwt.verify(token,secretKey, async(err,decode)=>{
-            const user =await User.findById(decode.id)
-            if(!user) return res.status(400).json({status:false,message:'invaild token'})
-            
-                const userData = {
-            id:user.id,
-            name : user.name,
-            email : user.email
-         }
-          return res.status(201).json({ status: true, message: "Profile Data", data: userData })
-         })
-         
-        
+        jwt.verify(token, secretKey, async (err, decoded) => {
+            if (err) {
+                console.log("JWT Error:", err);
+                return res.status(401).json({ status: false, message: "Invalid token" });
+            }
+
+            const user = await User.findById(decoded.id);
+            if (!user) return res.status(400).json({ status: false, message: "User not found" });
+
+            const userData = {
+                id: user.id,
+                name: user.name,
+                email: user.email
+            };
+            console.log("Cookies received:", req.cookies);
+
+
+            return res.status(200).json({ status: true, message: "Profile Data", data: userData });
+        });
+
     } catch (error) {
-        return res.status(400).json({ status: false, message: "Something went wrong", error: error.message })
+        console.log("Error:", error);
+        return res.status(500).json({ status: false, message: "Something went wrong", error: error.message });
     }
-})
+});
+
 
 router.post('/logout',(req,res)=>{
     res.clearCookie("authToken")
