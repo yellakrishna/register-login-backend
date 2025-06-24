@@ -6,7 +6,7 @@ import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 
 const app = express();
-app.use(express.json());
+
 import userRouter from "./routes/user.js";
 
 
@@ -23,7 +23,7 @@ const port = process.env.PORT || 5000;
 
 
 const allowedOrigins = [
-  
+  'http://localhost:5173',
   'https://register-login-frontend.vercel.app'
 ];
 
@@ -32,14 +32,14 @@ app.use(cors({
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      callback(new Error('CORS not allowed from this origin'));
     }
   },
-  credentials: true
+  credentials: true // if you use cookies/sessions
 }));
 
 
-
+app.use(express.json());
 app.use(cookieParser())
 
 app.use("/yella", userRouter);
