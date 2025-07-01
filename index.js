@@ -16,27 +16,27 @@ const port = process.env.PORT || 5000;
 
 
 
-// app.use(cors({
-//     origin:"https://register-login-frontend.vercel.app",
-//     credentials:true
-// }))
-
-
-const allowedOrigins = [
-  'http://localhost:5173',
-  'https://register-login-frontend.vercel.app'
-];
-
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('CORS not allowed from this origin'));
-    }
-  },
-  credentials: true // if you use cookies/sessions
-}));
+    origin:"https://register-login-frontend.vercel.app",
+    credentials:true
+}))
+
+
+// const allowedOrigins = [
+//   'http://localhost:5173',
+//   'https://register-login-frontend.vercel.app'
+// ];
+
+// app.use(cors({
+//   origin: function (origin, callback) {
+//     if (!origin || allowedOrigins.includes(origin)) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error('CORS not allowed from this origin'));
+//     }
+//   },
+//   credentials: true // if you use cookies/sessions
+// }));
 
 
 app.use(express.json());
